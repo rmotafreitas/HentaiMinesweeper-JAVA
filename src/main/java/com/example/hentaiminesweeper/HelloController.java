@@ -9,6 +9,7 @@ import javafx.event.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.image.Image;
@@ -16,12 +17,17 @@ import javafx.scene.image.Image;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class HelloController {
 
     private Image flag, bomb;
     private boolean firstClick = false;
     private int flagCount = 0;
+
+    public Timer timer = new Timer();
+    public int timeElapsed = 0;
 
     @FXML
     private ImageView hentai;
@@ -32,12 +38,39 @@ public class HelloController {
     @FXML
     private Pane pain;
 
+    @FXML
+    private Label timerLabel;
+
     private void intialize() {
         butao.setLayoutX(10);
+
+        timerLabel.setTranslateY(HelloApplication.size - timerLabel.getLayoutY() + 5);
+        timerLabel.setTranslateX(50);
+
+        timerLabel.setVisible(false);
+
+        pain.getChildren().add(timerLabel);
     }
 
     @FXML
     protected void onHelloButtonClick() {
+
+        //Start timer
+        // timeElapsed = 0;
+
+        // timer.schedule(new TimerTask() {
+
+        //     @Override
+        //     public void run() {
+             
+        //         timeElapsed++;
+        //         timerLabel.setText(String.valueOf(
+        //             timeElapsed
+        //         ));
+        //     }
+            
+        // }, 1000);
+        // timerLabel.setVisible(true);
 
         bombas = gerarBombas();
         HelloApplication.gamer = false;
@@ -61,6 +94,10 @@ public class HelloController {
 
             hentai.setFitHeight(HelloApplication.size);
             hentai.setFitWidth(HelloApplication.size);
+
+            GaussianBlur blurEffect = new GaussianBlur(20);
+            hentai.setEffect(blurEffect);
+
             hentai.setImage(image);
 
             butao.setVisible(false);
@@ -92,7 +129,7 @@ public class HelloController {
     protected int[][] gerarBombas() {
 
         int[][] matriz = gerarMatriz();
-        int numberMaxBombas = (HelloApplication.size / HelloApplication.tilesize) * 4;
+        int numberMaxBombas = (HelloApplication.size / HelloApplication.tilesize) * 3;
         for (int i = 0; i < numberMaxBombas; i++) {
             int x = (int) (Math.random() * (HelloApplication.size / HelloApplication.tilesize));
             int y = (int) (Math.random() * (HelloApplication.size / HelloApplication.tilesize));
@@ -183,7 +220,7 @@ public class HelloController {
                             int value = bombas[iii][iiii];
                             if (value == -69) {
 
-                                if (firstClick) {
+                                if (!firstClick) {
 
                                     // Change the bomb's place
                                     while(true){
@@ -310,6 +347,8 @@ public class HelloController {
         if (verificarVictórya()) {
 
             butao.setVisible(true);
+            hentai.setEffect(null);
+
             for (Node button : pain.getChildren()) {
 
                 if (button instanceof Button && !(button.getId() != null && button.getId().equals("butao"))) {
