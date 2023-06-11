@@ -19,8 +19,9 @@ import java.util.Random;
 
 public class HelloController {
 
-    Image flag, bomb;
-    Background defBack;
+    private Image flag, bomb;
+    private boolean firstClick = false;
+    private int flagCount = 0;
 
     @FXML
     private ImageView hentai;
@@ -152,7 +153,6 @@ public class HelloController {
             for (int ii = 0; ii < (int) (HelloApplication.size / HelloApplication.tilesize); ii++) {
 
                 Button b = new Button();
-                defBack = b.getBackground();
 
                 b.setTranslateX(i * HelloApplication.tilesize);
                 b.setTranslateY(ii * HelloApplication.tilesize);
@@ -170,6 +170,9 @@ public class HelloController {
                         if (HelloApplication.gamer)
                             return;
 
+                        if (!firstClick)
+                            firstClick = true;
+
                         MouseButton button = event.getButton();
 
                         int iii = (int) (b.getTranslateX() / HelloApplication.tilesize);
@@ -178,13 +181,31 @@ public class HelloController {
                         if (button == MouseButton.PRIMARY) {
 
                             int value = bombas[iii][iiii];
-
-                            openEspaço(iii, iiii, bombas);
-
                             if (value == -69) {
+
+                                if (firstClick) {
+
+                                    // Change the bomb's place
+                                    while(true){
+
+                                        int x = (int) (Math.random() * (HelloApplication.size / HelloApplication.tilesize));
+                                        int y = (int) (Math.random() * (HelloApplication.size / HelloApplication.tilesize));
+
+                                        if(bombas[x][y] == -69) continue;
+
+                                        bombas[x][y] = -69;
+                                        bombas[iii][iiii] = 0;
+                                        break;
+                                    }
+                                    return;
+                                }
+
                                 HelloApplication.gamer = true;
                                 butao.setVisible(true);
                             }
+
+                            openEspaço(iii, iiii, bombas);
+
 
                         } else if (button == MouseButton.SECONDARY) {
 
@@ -193,15 +214,19 @@ public class HelloController {
                             switch (value) {
                                 case 0:
                                     bombas[iii][iiii] = -2;
+                                    flagCount++;
                                     break;
                                 case -69:
                                     bombas[iii][iiii] = -420;
+                                    flagCount++;
                                     break;
                                 case -2:
                                     bombas[iii][iiii] = 0;
+                                    flagCount--;
                                     break;
                                 case -420:
                                     bombas[iii][iiii] = -69;
+                                    flagCount--;
                                     break;
                             }
                         }
@@ -255,10 +280,11 @@ public class HelloController {
                     shadow.setRadius(HelloApplication.tilesize / 2);
 
                     b.setEffect(shadow);
+                    b.setStyle("-fx-font-weight: bold");
+                    b.setStyle("-fx-font-size: 12px");
+
                     b.setStyle(
                             "-fx-text-fill: rgb(" + corAleatórya() + "," + corAleatórya() + "," + corAleatórya() + ")");
-                    b.setStyle("-fx-font-weight: bold");
-                    b.setStyle("-fx-font-size: 10px");
 
                 } else if (value == 0 || value == -69) {
 
