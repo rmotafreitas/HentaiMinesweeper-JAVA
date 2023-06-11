@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="HentaiMinesweeper:jar">
+  <artifact type="jar" name="HentaiMinesweeper:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/HentaiMinesweeper_jar</output-path>
     <root id="archive" name="HentaiMinesweeper.jar">
       <element id="module-output" name="HentaiMinesweeper" />
