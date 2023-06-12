@@ -5,6 +5,10 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.event.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -14,19 +18,22 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.image.Image;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
+import javafx.fxml.Initializable;
 
-public class HelloController {
+public class HelloController implements Initializable {
 
     private Image flag, bomb;
     private boolean firstClick = false;
     private int flagCount = 0;
 
-    public Timer timer = new Timer();
+    private Timeline timer;
     public int timeElapsed = 0;
 
     @FXML
@@ -41,39 +48,47 @@ public class HelloController {
     @FXML
     private Label timerLabel;
 
-    private void intialize() {
-        butao.setLayoutX(10);
-
-        timerLabel.setTranslateY(HelloApplication.size - timerLabel.getLayoutY() + 5);
-        timerLabel.setTranslateX(50);
-
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        
+        //butao.setLayoutX(10);
         timerLabel.setVisible(false);
+        timerLabel.setTranslateY(HelloApplication.size - timerLabel.getLayoutY() + 5);
 
-        pain.getChildren().add(timerLabel);
+        timerLabel.setFont(new Font("Comic Sans MS", 20));
+
+        //Start timer
+
+        timer = new Timeline(
+            new KeyFrame(Duration.seconds(1), 
+            new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+                
+                timeElapsed++;
+
+                long MM = (timeElapsed % 3600) / 60;
+                long SS = timeElapsed % 60;
+                String timeInMMSS = String.format("%02d:%02d", MM, SS);
+
+                timerLabel.setText(timeInMMSS);
+            }
+        }));
+
+        timer.setCycleCount(Timeline.INDEFINITE);
     }
 
     @FXML
     protected void onHelloButtonClick() {
 
-        //Start timer
-        // timeElapsed = 0;
-
-        // timer.schedule(new TimerTask() {
-
-        //     @Override
-        //     public void run() {
-             
-        //         timeElapsed++;
-        //         timerLabel.setText(String.valueOf(
-        //             timeElapsed
-        //         ));
-        //     }
-            
-        // }, 1000);
-        // timerLabel.setVisible(true);
+        timer.playFromStart();
+        timeElapsed = 0;
+        timerLabel.setVisible(true);
+        timerLabel.setText(String.valueOf(timeElapsed));
+        HelloApplication.gamer = false;
 
         bombas = gerarBombas();
-        HelloApplication.gamer = false;
 
         flag = new Image(
                 "https://media.discordapp.net/attachments/1099068976216154182/1117217972558237786/Sprite-0003.png",
@@ -220,25 +235,26 @@ public class HelloController {
                             int value = bombas[iii][iiii];
                             if (value == -69) {
 
-                                if (!firstClick) {
+                                // if (!firstClick) {
 
-                                    // Change the bomb's place
-                                    while(true){
+                                //     // Change the bomb's place
+                                //     while(true){
 
-                                        int x = (int) (Math.random() * (HelloApplication.size / HelloApplication.tilesize));
-                                        int y = (int) (Math.random() * (HelloApplication.size / HelloApplication.tilesize));
+                                //         int x = (int) (Math.random() * (HelloApplication.size / HelloApplication.tilesize));
+                                //         int y = (int) (Math.random() * (HelloApplication.size / HelloApplication.tilesize));
 
-                                        if(bombas[x][y] == -69) continue;
+                                //         if(bombas[x][y] == -69) continue;
 
-                                        bombas[x][y] = -69;
-                                        bombas[iii][iiii] = 0;
-                                        break;
-                                    }
-                                    return;
-                                }
+                                //         bombas[x][y] = -69;
+                                //         bombas[iii][iiii] = 0;
 
-                                HelloApplication.gamer = true;
-                                butao.setVisible(true);
+                                //         openEspaço(iii, iiii, bombas);
+                                //         break;
+                                //     }
+                                //     return;
+                                // }
+
+                                endPlay(false);
                             }
 
                             openEspaço(iii, iiii, bombas);
@@ -298,6 +314,7 @@ public class HelloController {
                     b.setGraphic(view);
                     b.setBackground(null);
                     continue;
+
                 } else if (value == -1983) {
 
                     b.setVisible(false);
@@ -344,28 +361,11 @@ public class HelloController {
         pain.getChildren().removeAll(remove);
         pain.getChildren().addAll(add);
 
-        if (verificarVictórya()) {
-
-            butao.setVisible(true);
-            hentai.setEffect(null);
-
-            for (Node button : pain.getChildren()) {
-
-                if (button instanceof Button && !(button.getId() != null && button.getId().equals("butao"))) {
-                    Button b = (Button) button;
-                    b.setBackground(null);
-                    b.setText("");
-                    b.setGraphic(null);
-                }
-            }
-        }
+        if (verificarVictórya()) endPlay(true);
 
     }
 
-    private String corAleatórya() {
-
-        return String.valueOf((new Random().nextInt((255 - 1) + 1) + 1));
-    }
+    private String corAleatórya() { return String.valueOf((new Random().nextInt((255 - 1) + 1) + 1)); }
 
     private boolean verificarVictórya() {
 
@@ -378,5 +378,30 @@ public class HelloController {
         }
 
         return true;
+    }
+
+    private void endPlay(boolean win){
+
+        butao.setVisible(true);
+        timer.stop();
+
+        if(win){
+            
+            hentai.setEffect(null);
+
+            for (Node button : pain.getChildren()) {
+
+                if (button instanceof Button && !(button.getId() != null && button.getId().equals("butao"))) {
+                    Button b = (Button) button;
+                    b.setBackground(null);
+                    b.setText("");
+                    b.setGraphic(null);
+                }
+            }
+
+            return;
+        }
+
+        HelloApplication.gamer = true;
     }
 }

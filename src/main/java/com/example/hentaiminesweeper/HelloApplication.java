@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Random;
+import java.util.Timer;
 
 public class HelloApplication extends Application {
 
@@ -30,12 +31,13 @@ public class HelloApplication extends Application {
 
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), size, size + 40);
-        stage.setTitle("Hello!");
+        stage.setTitle("Hentai MineSweeper");
         stage.setScene(scene);
         stage.show();
     }
 
     public static void main(String[] args) {
+        
         launch();
     }
 
