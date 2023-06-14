@@ -32,6 +32,7 @@ public class HelloController implements Initializable {
     private Image flag, bomb;
     private boolean firstClick = false;
     private int flagCount = 0;
+    public String apiIMG;
 
     private Timeline timer;
     public int timeElapsed = 0;
@@ -50,31 +51,31 @@ public class HelloController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        
-        //butao.setLayoutX(10);
+
+        // butao.setLayoutX(10);
         timerLabel.setVisible(false);
         timerLabel.setTranslateY(HelloApplication.size - timerLabel.getLayoutY() + 5);
 
         timerLabel.setFont(new Font("Comic Sans MS", 20));
 
-        //Start timer
+        // Start timer
 
         timer = new Timeline(
-            new KeyFrame(Duration.seconds(1), 
-            new EventHandler<ActionEvent>() {
+                new KeyFrame(Duration.seconds(1),
+                        new EventHandler<ActionEvent>() {
 
-            @Override
-            public void handle(ActionEvent event) {
-                
-                timeElapsed++;
+                            @Override
+                            public void handle(ActionEvent event) {
 
-                long MM = (timeElapsed % 3600) / 60;
-                long SS = timeElapsed % 60;
-                String timeInMMSS = String.format("%02d:%02d", MM, SS);
+                                timeElapsed++;
 
-                timerLabel.setText(timeInMMSS);
-            }
-        }));
+                                long MM = (timeElapsed % 3600) / 60;
+                                long SS = timeElapsed % 60;
+                                String timeInMMSS = String.format("%02d:%02d", MM, SS);
+
+                                timerLabel.setText(timeInMMSS);
+                            }
+                        }));
 
         timer.setCycleCount(Timeline.INDEFINITE);
     }
@@ -101,7 +102,7 @@ public class HelloController implements Initializable {
 
         try {
 
-            String apiIMG = HelloApplication.getIMagemUwU();
+            apiIMG = HelloApplication.getIMagemUwU();
             while (apiIMG.equals(null))
                 apiIMG = HelloApplication.getIMagemUwU();
             Image image = new Image(apiIMG, HelloApplication.size, HelloApplication.size,
@@ -144,7 +145,7 @@ public class HelloController implements Initializable {
     protected int[][] gerarBombas() {
 
         int[][] matriz = gerarMatriz();
-        int numberMaxBombas = (HelloApplication.size / HelloApplication.tilesize) * 3;
+        int numberMaxBombas = HelloApplication.bombCount;
         for (int i = 0; i < numberMaxBombas; i++) {
             int x = (int) (Math.random() * (HelloApplication.size / HelloApplication.tilesize));
             int y = (int) (Math.random() * (HelloApplication.size / HelloApplication.tilesize));
@@ -237,28 +238,29 @@ public class HelloController implements Initializable {
 
                                 // if (!firstClick) {
 
-                                //     // Change the bomb's place
-                                //     while(true){
+                                // // Change the bomb's place
+                                // while(true){
 
-                                //         int x = (int) (Math.random() * (HelloApplication.size / HelloApplication.tilesize));
-                                //         int y = (int) (Math.random() * (HelloApplication.size / HelloApplication.tilesize));
+                                // int x = (int) (Math.random() * (HelloApplication.size /
+                                // HelloApplication.tilesize));
+                                // int y = (int) (Math.random() * (HelloApplication.size /
+                                // HelloApplication.tilesize));
 
-                                //         if(bombas[x][y] == -69) continue;
+                                // if(bombas[x][y] == -69) continue;
 
-                                //         bombas[x][y] = -69;
-                                //         bombas[iii][iiii] = 0;
+                                // bombas[x][y] = -69;
+                                // bombas[iii][iiii] = 0;
 
-                                //         openEspaço(iii, iiii, bombas);
-                                //         break;
-                                //     }
-                                //     return;
+                                // openEspaço(iii, iiii, bombas);
+                                // break;
+                                // }
+                                // return;
                                 // }
 
                                 endPlay(false);
                             }
 
                             openEspaço(iii, iiii, bombas);
-
 
                         } else if (button == MouseButton.SECONDARY) {
 
@@ -361,11 +363,14 @@ public class HelloController implements Initializable {
         pain.getChildren().removeAll(remove);
         pain.getChildren().addAll(add);
 
-        if (verificarVictórya()) endPlay(true);
+        if (verificarVictórya())
+            endPlay(true);
 
     }
 
-    private String corAleatórya() { return String.valueOf((new Random().nextInt((255 - 1) + 1) + 1)); }
+    private String corAleatórya() {
+        return String.valueOf((new Random().nextInt((255 - 1) + 1) + 1));
+    }
 
     private boolean verificarVictórya() {
 
@@ -380,13 +385,13 @@ public class HelloController implements Initializable {
         return true;
     }
 
-    private void endPlay(boolean win){
+    private void endPlay(boolean win) {
 
         butao.setVisible(true);
         timer.stop();
 
-        if(win){
-            
+        if (win) {
+
             hentai.setEffect(null);
 
             for (Node button : pain.getChildren()) {
@@ -399,6 +404,7 @@ public class HelloController implements Initializable {
                 }
             }
 
+            DatabaseConnection.addUserRecord(timeElapsed, (int) (HelloApplication.size / HelloApplication.tilesize), apiIMG);
             return;
         }
 

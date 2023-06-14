@@ -3,6 +3,8 @@ package com.example.hentaiminesweeper;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
@@ -21,13 +23,17 @@ import java.util.Timer;
 public class HelloApplication extends Application {
 
     public static int size, tilesize = 32;
+    public static int bombCount = (HelloApplication.size / HelloApplication.tilesize) * 3;
+
+    private static int windowMax = 30, windowMin = 14;
 
     public static boolean gamer = false;
 
     @Override
     public void start(Stage stage) throws IOException {
 
-        HelloApplication.size = (new Random().nextInt((30 - 14) + 1) + 14) * tilesize;
+        HelloApplication.size = (new Random().nextInt((windowMax - windowMin) + 1) + windowMin) * tilesize;
+        DatabaseConnection.connectToFirebase();
 
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), size, size + 40);
@@ -84,5 +90,15 @@ public class HelloApplication extends Application {
         }
 
         return null;
+    }
+
+    public static void sendMessage(String header, String content, boolean error){
+
+        Alert alert = new Alert(error ? AlertType.ERROR : AlertType.INFORMATION);
+        alert.setTitle("SYSTEM");
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+
+        alert.show();
     }
 }
