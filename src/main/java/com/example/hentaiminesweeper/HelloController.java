@@ -404,7 +404,9 @@ public class HelloController implements Initializable {
                 }
             }
 
-            DatabaseConnection.addUserRecord(timeElapsed, (int) (HelloApplication.size / HelloApplication.tilesize), apiIMG);
+            String name = HelloApplication.promptRestricted("Enter your name, only 3 characters allowed", 3, true);
+
+            DatabaseConnection.addUserRecord(timeElapsed, (int) (HelloApplication.size / HelloApplication.tilesize), apiIMG, name);
             return;
         }
 

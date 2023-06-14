@@ -1,12 +1,17 @@
 package com.example.hentaiminesweeper;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 
 import java.net.*;
@@ -23,7 +28,7 @@ import java.util.Timer;
 public class HelloApplication extends Application {
 
     public static int size, tilesize = 32;
-    public static int bombCount = (HelloApplication.size / HelloApplication.tilesize) * 3;
+    public static int bombCount = 0;
 
     private static int windowMax = 30, windowMin = 14;
 
@@ -33,6 +38,8 @@ public class HelloApplication extends Application {
     public void start(Stage stage) throws IOException {
 
         HelloApplication.size = (new Random().nextInt((windowMax - windowMin) + 1) + windowMin) * tilesize;
+        HelloApplication.bombCount = (HelloApplication.size / HelloApplication.tilesize) * 3;
+
         DatabaseConnection.connectToFirebase();
 
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
@@ -100,5 +107,32 @@ public class HelloApplication extends Application {
         alert.setContentText(content);
 
         alert.show();
+    }
+
+    public static String prompt(String prompt)
+    {
+        TextInputDialog td = new TextInputDialog("");
+        td.setTitle("SYSTEM");
+        td.setHeaderText(prompt);
+        td.showAndWait();
+
+        return td.getEditor().getText();
+    }
+
+    public static String promptRestricted(String prompt, int charCount, boolean strict)
+    {
+        TextInputDialog td = new TextInputDialog("");
+        td.setTitle("SYSTEM");
+        td.setHeaderText(prompt);
+
+        td.showAndWait();
+        String text = td.getEditor().getText();
+
+        String alphanumREGEX = "[a-zA-Z0-9]+";
+        if((strict && text.length() != charCount) || (!strict && text.length() > charCount) || !text.matches(alphanumREGEX)){
+            return promptRestricted(prompt, charCount, strict);
+        }
+
+        return text.toUpperCase();
     }
 }

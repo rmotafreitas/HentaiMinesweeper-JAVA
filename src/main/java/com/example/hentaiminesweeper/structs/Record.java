@@ -2,18 +2,16 @@ package com.example.hentaiminesweeper.structs;
 
 public class Record {
 
-    public String image;
-    public String ip, device;
+    public String image, name;
 
     public long time;
     public int boardSize;
 
-    public Record(String image, String ip, String device, long time, int boardSize) {
+    public Record(String image, long time, int boardSize, String name) {
 
         this.time = time;
         this.boardSize = boardSize;
-        this.device = device;
-        this.ip = ip;
         this.image = image;
+        this.name = name;
     }
 }

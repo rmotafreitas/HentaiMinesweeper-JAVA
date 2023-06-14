@@ -53,27 +53,23 @@ public class DatabaseConnection {
         return !(application == null || database == null);
     }
 
-    public static void addUserRecord(long time, int boardSize, String image) {
+    public static void addUserRecord(long time, int boardSize, String image, String name) {
 
         if (!isInitialized())
             return;
-        // Get user ip
         try {
 
-            InetAddress address = InetAddress.getLocalHost();
-
-            String ip = address.getHostAddress();
-            String device = address.getHostName();
+            
 
             String childID = UUID.randomUUID().toString();
 
             DatabaseReference usersRef = database.getReference("records").child(childID);
             usersRef.setValue(
-                new Record(image, ip, device, time, boardSize), 
+                new Record(image, time, boardSize, name), 
                 null
             );
 
-        } catch (UnknownHostException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
