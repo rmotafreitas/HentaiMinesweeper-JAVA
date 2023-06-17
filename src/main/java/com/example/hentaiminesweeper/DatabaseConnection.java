@@ -6,17 +6,23 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import com.example.hentaiminesweeper.structs.Record;
+import com.example.hentaiminesweeper.structs.User;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.DatabaseReference.CompletionListener;
 
 public class DatabaseConnection {
@@ -40,11 +46,11 @@ public class DatabaseConnection {
 
         } catch (FileNotFoundException e) {
 
-            HelloApplication.sendMessage("No credentials file found","Your credentials file is missing, you either don't have access to this database or have placed it in the wrong folder", true);
+            Window.sendMessage("No credentials file found","Your credentials file is missing, you either don't have access to this database or have placed it in the wrong folder", true);
             e.printStackTrace();
         } catch (IOException e) {
 
-            HelloApplication.sendMessage("Corrupted credentials","Your credentials file has a syntax error or is simply corrupted", true);
+            Window.sendMessage("Corrupted credentials","Your credentials file has a syntax error or is simply corrupted", true);
             e.printStackTrace();
         }
     }
@@ -59,12 +65,10 @@ public class DatabaseConnection {
             return;
         try {
 
-            
-
             String childID = UUID.randomUUID().toString();
 
-            DatabaseReference usersRef = database.getReference("records").child(childID);
-            usersRef.setValue(
+            DatabaseReference recordsRef = database.getReference("records").child(childID);
+            recordsRef.setValue(
                 new Record(image, time, boardSize, name), 
                 null
             );
@@ -72,5 +76,65 @@ public class DatabaseConnection {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void createUserAccount(String username, String password){
+
+        String encryptedPassword = Utils.encryptPasswordValue(password);
+        User user = new User(username, encryptedPassword);
+
+        user.joinedAt = new Date().toLocaleString();
+        user.id = UUID.randomUUID().toString();
+
+        try {
+            
+            DatabaseReference userRef = database.getReference("users").child(user.id);
+            userRef.setValue(
+                user,
+                new CompletionListener() {
+
+                    @Override
+                    public void onComplete(DatabaseError error, DatabaseReference ref) {
+                        
+                        Utils.login(user.username, user.password);
+                    }
+                    
+                }
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void getUserAccountOfName(String username, SynchronousQueryCompletionListener listener){
+
+        DatabaseReference usersRef = database.getReference("users/");
+        Query query = usersRef.orderByChild("username").equalTo(username);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+
+                if(snapshot.getChildrenCount() == 0) listener.queryFinished(null);;
+
+                for (DataSnapshot issue : snapshot.getChildren()) {
+                    
+                    listener.queryFinished(new User[]{issue.getValue(User.class)});
+                    return;
+                }
+
+                listener.queryFinished(null);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {}
+            
+        });
+    }
+
+    public interface SynchronousQueryCompletionListener{
+
+        public void queryFinished(Object[] returnValue);
     }
 }

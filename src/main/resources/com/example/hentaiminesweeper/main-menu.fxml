@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<Pane fx:id="pain" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="555.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.hentaiminesweeper.menus.MainMenuController">
+   <children>
+      <Label fx:id="title" layoutX="15.0" layoutY="15.0" minHeight="16" minWidth="69" prefHeight="44.0" prefWidth="419.0" text="Hentai MineSweeper!">
+         <font>
+            <Font name="Agency FB" size="28.0" />
+         </font></Label>
+      <Label fx:id="subtitle" layoutX="15.0" layoutY="60.0" minHeight="16" minWidth="69" text="By Ness.js and Sagiri721">
+         <font>
+            <Font name="JetBrains Mono Medium" size="12.0" />
+         </font></Label>
+      <Label layoutX="14.0" layoutY="524.0" prefHeight="17.0" prefWidth="187.0" text="Version 1.1.0" />
+      <Button id="splay" contentDisplay="TOP" layoutX="15.0" layoutY="118.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="222.0" stylesheets="@menu.css" text="Classic MineSweeper" onAction="#classicStart">
+         <font>
+            <Font name="Comic Sans MS" size="17.0" />
+         </font>
+      </Button>
+      <Button id="splay" contentDisplay="TOP" layoutX="15.0" layoutY="180.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="222.0" stylesheets="@menu.css" text="Co-op MineSweeper">
+         <font>
+            <Font name="Comic Sans MS" size="17.0" />
+         </font>
+      </Button>
+      <Label layoutX="244.0" layoutY="123.0" text="Play the classic minesweeper we all know and love!" />
+      <Label layoutX="244.0" layoutY="140.0" text="While collecting pictures of your favourite waifus!" />
+      <Label layoutX="244.0" layoutY="185.0" text="Everything is more fun with friends! " />
+      <Label layoutX="244.0" layoutY="202.0" text="Create a lobby and play co-op with up to N friends!" />
+      <Button id="splay" contentDisplay="TOP" layoutX="15.0" layoutY="242.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="222.0" stylesheets="@menu.css" text="MineSweeper99">
+         <font>
+            <Font name="Comic Sans MS" size="17.0" />
+         </font>
+      </Button>
+      <Label layoutX="244.0" layoutY="247.0" text="Confident of your skills? Play competitive minesweeper with" />
+      <Label layoutX="244.0" layoutY="264.0" text="99 other players from around the world!" />
+      <ImageView fitHeight="267.0" fitWidth="150.0" layoutX="445.0" layoutY="286.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@title.png" />
+         </image>
+      </ImageView>
+      <Button id="abtn" layoutX="20.0" layoutY="477.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="106.0" stylesheets="@menu.css" text="My gallery" />
+      <Button id="abtn" layoutX="151.0" layoutY="477.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="106.0" stylesheets="@menu.css" text="Leaderboards" />
+      <Button id="abtn" layoutX="286.0" layoutY="477.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="106.0" stylesheets="@menu.css" text="Battle pass" />
+      <Hyperlink accessibleText="https://github.com/rmotafreitas/HentaiMinesweeper-JAVA" layoutX="111.0" layoutY="521.0" onAction="#onLinkClick" text="Check out the source code!" />
+      <Accordion layoutX="25.0" layoutY="308.0" />
+      <Pane fx:id="profile" layoutX="20.0" layoutY="308.0" prefHeight="151.0" prefWidth="374.0">
+         <children>
+            <Label fx:id="profile_label" layoutX="14.0" layoutY="14.0" text="USER PROFILE OF: ">
+               <font>
+                  <Font name="Agency FB" size="19.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="47.0" text="Best time: " />
+            <Label layoutX="14.0" layoutY="63.0" text="Images found:" />
+            <Label layoutX="14.0" layoutY="99.0" text="Global ranking: " />
+            <Label layoutX="14.0" layoutY="120.0" text="Local ranking:" />
+            <Label layoutX="245.0" layoutY="120.0" text="Joined at: " />
+            <ImageView fitHeight="108.0" fitWidth="117.0" layoutX="245.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@pfp.png" />
+               </image>
+            </ImageView>
+         </children>
+      </Pane>
+      <Button fx:id="login" id="sbtn" layoutX="321.0" layoutY="25.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="106.0" stylesheets="@menu.css" text="Login" onAction="#loginActivity" />
+      <Button fx:id="register" id="sbtn" layoutX="444.0" layoutY="25.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="133.0" stylesheets="@menu.css" text="Register" onAction="#registerActivity" />
+   </children>
+</Pane>

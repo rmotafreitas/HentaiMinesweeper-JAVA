@@ -1,1 +1,1 @@
-mvn exec:java -Dexec.mainClass=com.example.hentaiminesweeper.HelloApplication
+mvn exec:java -Dexec.mainClass=com.example.hentaiminesweeper.Main

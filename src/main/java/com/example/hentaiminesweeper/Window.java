@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -18,6 +19,11 @@ import java.net.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.example.hentaiminesweeper.structs.ApiImage;
+import com.example.hentaiminesweeper.structs.User;
+import com.example.hentaiminesweeper.structs.ApiImage.ApiImageCollection;
+import com.google.gson.Gson;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,36 +31,50 @@ import java.io.InputStreamReader;
 import java.util.Random;
 import java.util.Timer;
 
-public class HelloApplication extends Application {
+public class Window extends Application {
 
-    public static int size, tilesize = 32;
+    public static int size, tilesize = 32, tiles = 16;
     public static int bombCount = 0;
 
     private static int windowMax = 30, windowMin = 14;
 
     public static boolean gamer = false;
+    public static ApiImage image = null;
 
     @Override
     public void start(Stage stage) throws IOException {
 
-        HelloApplication.size = (new Random().nextInt((windowMax - windowMin) + 1) + windowMin) * tilesize;
-        HelloApplication.bombCount = (HelloApplication.size / HelloApplication.tilesize) * 3;
+        Window.size = tiles * tilesize;
+        Window.bombCount = (Window.size / Window.tilesize) * 3;
 
-        DatabaseConnection.connectToFirebase();
-
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), size, size + 40);
+        FXMLLoader fxmlLoader = new FXMLLoader(Window.class.getResource("main-menu.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Hentai MineSweeper");
         stage.setScene(scene);
         stage.show();
     }
 
-    public static void main(String[] args) {
+    public static void changeScene(Scene scene, String page) throws IOException{
+
+        FXMLLoader loader = new FXMLLoader(Window.class.getResource(page));
+        Stage stage = (Stage) scene.getWindow();
+        
+        Scene s;
+        if(page.equals("hello-view.fxml")){
+            
+            s = new Scene(loader.load(), Window.size, Window.size + 40);
+        }else s = new Scene(loader.load());
+
+        stage.setScene(s);
+    }
+
+    public static void launchApp(){
         
         launch();
     }
 
     public static String getIMagemUwU() {
+
         try {
 
             URL url = new URL("https://nekos.moe/api/v1/random/image");
@@ -80,11 +100,13 @@ public class HelloApplication extends Application {
                 connection.disconnect();
                 String jsonResponse = response.toString();
 
-                Pattern pattern = Pattern.compile("\"id\":\"([^\"]+)\"");
-                Matcher matcher = pattern.matcher(jsonResponse);
+                Gson g = new Gson();
+                ApiImageCollection imageObject = g.fromJson(jsonResponse, ApiImageCollection.class);
 
-                if (matcher.find())
-                    return "https://nekos.moe/image/" + matcher.group(1);
+                ApiImage image = imageObject.images[0];
+                Window.image = image;
+
+                return "https://nekos.moe/image/" + image.id;
 
             } else {
                 System.out.println("Error: Response code: " + code);
@@ -101,12 +123,12 @@ public class HelloApplication extends Application {
 
     public static void sendMessage(String header, String content, boolean error){
 
-        Alert alert = new Alert(error ? AlertType.ERROR : AlertType.INFORMATION);
+        Alert alert = new Alert((error ? AlertType.ERROR : AlertType.INFORMATION));
         alert.setTitle("SYSTEM");
         alert.setHeaderText(header);
         alert.setContentText(content);
 
-        alert.show();
+        alert.showAndWait();
     }
 
     public static String prompt(String prompt)
@@ -135,4 +157,5 @@ public class HelloApplication extends Application {
 
         return text.toUpperCase();
     }
+
 }
