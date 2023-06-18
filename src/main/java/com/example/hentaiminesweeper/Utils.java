@@ -60,6 +60,7 @@ public class Utils {
                 ObjectInputStream ois = new ObjectInputStream(fis);
 
                 User myAccount = (User) ois.readObject();
+                
                 System.out.println("Logged in as " + myAccount.username);
                 Main.account = myAccount;
 

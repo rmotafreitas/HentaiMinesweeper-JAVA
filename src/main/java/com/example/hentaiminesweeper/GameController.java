@@ -78,6 +78,7 @@ public class GameController implements Initializable {
                         }));
 
         timer.setCycleCount(Timeline.INDEFINITE);
+        onHelloButtonClick();
     }
 
     @FXML
@@ -404,9 +405,7 @@ public class GameController implements Initializable {
                 }
             }
 
-            String name = Window.promptRestricted("Enter your name, only 3 characters allowed", 3, true);
-
-            DatabaseConnection.addUserRecord(timeElapsed, (int) (Window.size / Window.tilesize), apiIMG, name);
+            DatabaseConnection.addUserRecord(timeElapsed, (int) (Window.size / Window.tilesize), apiIMG);
             return;
         }
 

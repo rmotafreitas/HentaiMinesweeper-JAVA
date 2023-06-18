@@ -54,11 +54,11 @@
                   <Font name="Agency FB" size="19.0" />
                </font>
             </Label>
-            <Label layoutX="14.0" layoutY="47.0" text="Best time: " />
-            <Label layoutX="14.0" layoutY="63.0" text="Images found:" />
-            <Label layoutX="14.0" layoutY="99.0" text="Global ranking: " />
-            <Label layoutX="14.0" layoutY="120.0" text="Local ranking:" />
-            <Label layoutX="245.0" layoutY="120.0" text="Joined at: " />
+            <Label fx:id="b_time" layoutX="14.0" layoutY="47.0" text="Best time: " />
+            <Label fx:id="f_images" layoutX="14.0" layoutY="63.0" text="Images found:" />
+            <Label fx:id="g_ranking" layoutX="14.0" layoutY="99.0" text="Global ranking: " />
+            <Label fx:id="l_ranking" layoutX="14.0" layoutY="120.0" text="Local ranking:" />
+            <Label fx:id="d_join" layoutX="245.0" layoutY="120.0" text="Joined at: " />
             <ImageView fitHeight="108.0" fitWidth="117.0" layoutX="245.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@pfp.png" />

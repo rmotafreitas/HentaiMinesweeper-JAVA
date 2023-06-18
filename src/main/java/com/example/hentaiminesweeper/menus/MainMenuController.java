@@ -32,7 +32,7 @@ public class MainMenuController implements Initializable{
     private Pane profile;
 
     @FXML
-    private Label profile_label;
+    private Label profile_label, g_ranking, l_ranking, b_time, f_images, d_join;
 
     @FXML
     private Button login;
@@ -41,7 +41,18 @@ public class MainMenuController implements Initializable{
     public void initialize(URL location, ResourceBundle resources) {
     
         profile.setStyle("-fx-border-color: black");
-        profile_label.setText("USER ACCOUNT OF: " + (Main.account == null ? "Guest" : Main.account.username));
+
+        // Define profile information
+        if(Main.account != null){
+
+            profile_label.setText("USER ACCOUNT OF: " + (Main.account == null ? "Guest" : Main.account.username));
+            
+            g_ranking.setText("Glabal ranking: " + (Main.account.globalRank == -1 ? "###" : Main.account.globalRank));
+            l_ranking.setText("Local ranking: " + (Main.account.localRank == -1 ? "###" : Main.account.localRank));
+            b_time.setText("Best time: " + (Main.account.bestTime == -1 ? "###" : (Main.account.bestTime + "s")));
+            f_images.setText("Images found: " + Main.account.imagesFound);
+            d_join.setText("Joined at: " + Main.account.joinedAt.split(",")[0]);
+        }
     }
 
     @FXML
@@ -53,7 +64,7 @@ public class MainMenuController implements Initializable{
     protected void classicStart(){
 
         try {
-            Window.changeScene(profile.getScene(), "hello-view.fxml");
+            Window.changeScene(profile.getScene(), "difficulty.fxml");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -147,6 +158,7 @@ public class MainMenuController implements Initializable{
 
                         DatabaseConnection.createUserAccount(username, password);
                         Window.sendMessage("Account created", "Welcome to the Hentai MineSweeper community " + username + "!", false);
+                        return;
                     }
                     
                     Window.sendMessage("Account creation failed", "The username " + username + " is already in use!", false);

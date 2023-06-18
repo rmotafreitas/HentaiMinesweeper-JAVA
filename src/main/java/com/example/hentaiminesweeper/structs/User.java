@@ -15,7 +15,7 @@ public class User implements Serializable{
     public String password = null;
 
     public long imagesFound = 0;
-    public long[] bestTime = null;
+    public long bestTime = -1;
 
     public long onlineGames = 0;
     public long onlineWins = 0;

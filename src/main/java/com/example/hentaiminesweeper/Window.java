@@ -1,8 +1,10 @@
 package com.example.hentaiminesweeper;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -20,6 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.example.hentaiminesweeper.structs.ApiImage;
+import com.example.hentaiminesweeper.structs.GameDifficulty;
 import com.example.hentaiminesweeper.structs.User;
 import com.example.hentaiminesweeper.structs.ApiImage.ApiImageCollection;
 import com.google.gson.Gson;
@@ -60,7 +63,7 @@ public class Window extends Application {
         Stage stage = (Stage) scene.getWindow();
         
         Scene s;
-        if(page.equals("hello-view.fxml")){
+        if(page.equals("game.fxml")){
             
             s = new Scene(loader.load(), Window.size, Window.size + 40);
         }else s = new Scene(loader.load());
@@ -121,14 +124,18 @@ public class Window extends Application {
         return null;
     }
 
+    @FXML
     public static void sendMessage(String header, String content, boolean error){
 
-        Alert alert = new Alert((error ? AlertType.ERROR : AlertType.INFORMATION));
-        alert.setTitle("SYSTEM");
-        alert.setHeaderText(header);
-        alert.setContentText(content);
-
-        alert.showAndWait();
+        Platform.runLater(() -> {
+    
+            Alert alert = new Alert((error ? AlertType.ERROR : AlertType.INFORMATION));
+            alert.setTitle("SYSTEM");
+            alert.setHeaderText(header);
+            alert.setContentText(content);
+    
+            alert.showAndWait();
+        });
     }
 
     public static String prompt(String prompt)
@@ -158,4 +165,11 @@ public class Window extends Application {
         return text.toUpperCase();
     }
 
+    public static void updateDifficulty(GameDifficulty dif){
+
+        Window.tiles = dif.size;
+        Window.size = tiles * tilesize;
+
+        Window.bombCount = dif.mines;
+    }
 }

@@ -59,17 +59,22 @@ public class DatabaseConnection {
         return !(application == null || database == null);
     }
 
-    public static void addUserRecord(long time, int boardSize, String image, String name) {
+    public static void addUserRecord(long time, int boardSize, String image) {
 
-        if (!isInitialized())
+        if (!isInitialized()) return;
+        if(Main.account == null) {
+
+            Window.sendMessage("Not logged in", "You are not logged in so you can't submit scores!", true);
             return;
+        }
+
         try {
 
             String childID = UUID.randomUUID().toString();
 
             DatabaseReference recordsRef = database.getReference("records").child(childID);
             recordsRef.setValue(
-                new Record(image, time, boardSize, name), 
+                new Record(image, time, boardSize, Main.account), 
                 null
             );
 
@@ -79,6 +84,8 @@ public class DatabaseConnection {
     }
 
     public static void createUserAccount(String username, String password){
+
+        if (!isInitialized()) return;
 
         String encryptedPassword = Utils.encryptPasswordValue(password);
         User user = new User(username, encryptedPassword);
@@ -91,15 +98,7 @@ public class DatabaseConnection {
             DatabaseReference userRef = database.getReference("users").child(user.id);
             userRef.setValue(
                 user,
-                new CompletionListener() {
-
-                    @Override
-                    public void onComplete(DatabaseError error, DatabaseReference ref) {
-                        
-                        Utils.login(user.username, user.password);
-                    }
-                    
-                }
+                null
             );
 
         } catch (Exception e) {
@@ -109,14 +108,14 @@ public class DatabaseConnection {
 
     public static void getUserAccountOfName(String username, SynchronousQueryCompletionListener listener){
 
+        if (!isInitialized()) return;
+
         DatabaseReference usersRef = database.getReference("users/");
         Query query = usersRef.orderByChild("username").equalTo(username);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-
-                if(snapshot.getChildrenCount() == 0) listener.queryFinished(null);;
 
                 for (DataSnapshot issue : snapshot.getChildren()) {
                     
