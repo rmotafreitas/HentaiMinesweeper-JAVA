@@ -43,6 +43,9 @@ public class DifficultyMenuController implements Initializable{
             {
                 String id = ((Node) newVal).getId();
                 selectedDifficulty = GameDifficulty.convert(id);
+
+                tiles.setValue(selectedDifficulty.size);
+                bombs.setValue(selectedDifficulty.mines);
             }
         );
 

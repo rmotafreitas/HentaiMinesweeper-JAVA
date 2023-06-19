@@ -117,6 +117,7 @@ public class GameController implements Initializable {
 
             hentai.setImage(image);
 
+            butao.setLayoutX(125);
             butao.setVisible(false);
             butao.setTranslateY(Window.size - butao.getLayoutY() + 5);
 
@@ -189,6 +190,13 @@ public class GameController implements Initializable {
             }
         } else {
             bombas[y][x] = bombs;
+        }
+
+        for (int i = 0; i < bombas.length ; i++) {
+            for (int j = 0; j < bombas.length; j++) {
+                System.out.print(bombas[j][i] + " ");
+            }
+            System.out.println();
         }
     }
 

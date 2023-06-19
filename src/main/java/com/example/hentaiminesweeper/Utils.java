@@ -25,6 +25,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.jasypt.intf.cli.JasyptPBEStringEncryptionCLI;
 import org.jasypt.util.text.BasicTextEncryptor;
 
+import com.example.hentaiminesweeper.menus.MainMenuController;
 import com.example.hentaiminesweeper.structs.User;
 import com.google.gson.Gson;
 
@@ -112,6 +113,7 @@ public class Utils {
                     Main.account = myAccount;
                     myAccount.writeMyData();
 
+                    MainMenuController.reInitialize();
                     Window.sendMessage("Login success", "You were logged in successfully", false);
                 }else{
 

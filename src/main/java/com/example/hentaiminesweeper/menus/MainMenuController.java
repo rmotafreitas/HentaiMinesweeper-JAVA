@@ -11,6 +11,7 @@ import com.example.hentaiminesweeper.Utils;
 import com.example.hentaiminesweeper.Window;
 import com.example.hentaiminesweeper.DatabaseConnection.SynchronousQueryCompletionListener;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -37,10 +38,13 @@ public class MainMenuController implements Initializable{
     @FXML
     private Button login;
 
+    private static MainMenuController app = null;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
     
         profile.setStyle("-fx-border-color: black");
+        app = this;
 
         // Define profile information
         if(Main.account != null){
@@ -169,6 +173,23 @@ public class MainMenuController implements Initializable{
         }else {
 
             Window.sendMessage("Format error", "It seems the data you inserted is not accepted by the system. \nKeep in mind the following account creation rules:\n* Username and password can't be empty\n* Password needs to be at least 3 characters long\n* Usernames can have from 3 to 30 characters, it can only contain alphanumeric characters and underscores, a username can't start with a number", true);
+        }
+    }
+
+    public static void reInitialize(){
+
+        if(Main.account != null){
+
+            Platform.runLater(() -> {
+    
+                app.profile_label.setText("USER ACCOUNT OF: " + (Main.account == null ? "Guest" : Main.account.username));
+                
+                app.g_ranking.setText("Glabal ranking: " + (Main.account.globalRank == -1 ? "###" : Main.account.globalRank));
+                app.l_ranking.setText("Local ranking: " + (Main.account.localRank == -1 ? "###" : Main.account.localRank));
+                app.b_time.setText("Best time: " + (Main.account.bestTime == -1 ? "###" : (Main.account.bestTime + "s")));
+                app.f_images.setText("Images found: " + Main.account.imagesFound);
+                app.d_join.setText("Joined at: " + Main.account.joinedAt.split(",")[0]);
+            });
         }
     }
 }
