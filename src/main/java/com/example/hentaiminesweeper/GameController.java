@@ -27,11 +27,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javafx.fxml.Initializable;
 
-public class HelloController implements Initializable {
+public class GameController implements Initializable {
 
     private Image flag, bomb;
     private boolean firstClick = false;
     private int flagCount = 0;
+    public String apiIMG;
 
     private Timeline timer;
     public int timeElapsed = 0;
@@ -50,33 +51,34 @@ public class HelloController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        
-        //butao.setLayoutX(10);
+
+        // butao.setLayoutX(10);
         timerLabel.setVisible(false);
-        timerLabel.setTranslateY(HelloApplication.size - timerLabel.getLayoutY() + 5);
+        timerLabel.setTranslateY(Window.size - timerLabel.getLayoutY() + 5);
 
         timerLabel.setFont(new Font("Comic Sans MS", 20));
 
-        //Start timer
+        // Start timer
 
         timer = new Timeline(
-            new KeyFrame(Duration.seconds(1), 
-            new EventHandler<ActionEvent>() {
+                new KeyFrame(Duration.seconds(1),
+                        new EventHandler<ActionEvent>() {
 
-            @Override
-            public void handle(ActionEvent event) {
-                
-                timeElapsed++;
+                            @Override
+                            public void handle(ActionEvent event) {
 
-                long MM = (timeElapsed % 3600) / 60;
-                long SS = timeElapsed % 60;
-                String timeInMMSS = String.format("%02d:%02d", MM, SS);
+                                timeElapsed++;
 
-                timerLabel.setText(timeInMMSS);
-            }
-        }));
+                                long MM = (timeElapsed % 3600) / 60;
+                                long SS = timeElapsed % 60;
+                                String timeInMMSS = String.format("%02d:%02d", MM, SS);
+
+                                timerLabel.setText(timeInMMSS);
+                            }
+                        }));
 
         timer.setCycleCount(Timeline.INDEFINITE);
+        onHelloButtonClick();
     }
 
     @FXML
@@ -86,7 +88,7 @@ public class HelloController implements Initializable {
         timeElapsed = 0;
         timerLabel.setVisible(true);
         timerLabel.setText(String.valueOf(timeElapsed));
-        HelloApplication.gamer = false;
+        Window.gamer = false;
 
         bombas = gerarBombas();
 
@@ -101,22 +103,23 @@ public class HelloController implements Initializable {
 
         try {
 
-            String apiIMG = HelloApplication.getIMagemUwU();
+            apiIMG = Window.getIMagemUwU();
             while (apiIMG.equals(null))
-                apiIMG = HelloApplication.getIMagemUwU();
-            Image image = new Image(apiIMG, HelloApplication.size, HelloApplication.size,
+                apiIMG = Window.getIMagemUwU();
+            Image image = new Image(apiIMG, Window.size, Window.size,
                     false, false);
 
-            hentai.setFitHeight(HelloApplication.size);
-            hentai.setFitWidth(HelloApplication.size);
+            hentai.setFitHeight(Window.size);
+            hentai.setFitWidth(Window.size);
 
             GaussianBlur blurEffect = new GaussianBlur(20);
             hentai.setEffect(blurEffect);
 
             hentai.setImage(image);
 
+            butao.setLayoutX(125);
             butao.setVisible(false);
-            butao.setTranslateY(HelloApplication.size - butao.getLayoutY() + 5);
+            butao.setTranslateY(Window.size - butao.getLayoutY() + 5);
 
             desenharCoisaQuadradão();
 
@@ -126,11 +129,11 @@ public class HelloController implements Initializable {
     }
 
     protected int[][] gerarMatriz() {
-        int[][] matriz = new int[(int) (HelloApplication.size / HelloApplication.tilesize)][(int) (HelloApplication.size
-                / HelloApplication.tilesize)];
+        int[][] matriz = new int[(int) (Window.size / Window.tilesize)][(int) (Window.size
+                / Window.tilesize)];
 
-        for (int i = 0; i < (int) (HelloApplication.size / HelloApplication.tilesize); i++) {
-            for (int ii = 0; ii < (int) (HelloApplication.size / HelloApplication.tilesize); ii++) {
+        for (int i = 0; i < (int) (Window.size / Window.tilesize); i++) {
+            for (int ii = 0; ii < (int) (Window.size / Window.tilesize); ii++) {
 
                 matriz[i][ii] = 0;
             }
@@ -144,10 +147,10 @@ public class HelloController implements Initializable {
     protected int[][] gerarBombas() {
 
         int[][] matriz = gerarMatriz();
-        int numberMaxBombas = (HelloApplication.size / HelloApplication.tilesize) * 3;
+        int numberMaxBombas = Window.bombCount;
         for (int i = 0; i < numberMaxBombas; i++) {
-            int x = (int) (Math.random() * (HelloApplication.size / HelloApplication.tilesize));
-            int y = (int) (Math.random() * (HelloApplication.size / HelloApplication.tilesize));
+            int x = (int) (Math.random() * (Window.size / Window.tilesize));
+            int y = (int) (Math.random() * (Window.size / Window.tilesize));
 
             if (matriz[y][x] == -69) {
                 i--;
@@ -188,6 +191,13 @@ public class HelloController implements Initializable {
         } else {
             bombas[y][x] = bombs;
         }
+
+        for (int i = 0; i < bombas.length ; i++) {
+            for (int j = 0; j < bombas.length; j++) {
+                System.out.print(bombas[j][i] + " ");
+            }
+            System.out.println();
+        }
     }
 
     /*
@@ -201,25 +211,25 @@ public class HelloController implements Initializable {
 
     private void desenharCoisaQuadradão() {
 
-        for (int i = 0; i < (int) (HelloApplication.size / HelloApplication.tilesize); i++) {
-            for (int ii = 0; ii < (int) (HelloApplication.size / HelloApplication.tilesize); ii++) {
+        for (int i = 0; i < (int) (Window.size / Window.tilesize); i++) {
+            for (int ii = 0; ii < (int) (Window.size / Window.tilesize); ii++) {
 
                 Button b = new Button();
 
-                b.setTranslateX(i * HelloApplication.tilesize);
-                b.setTranslateY(ii * HelloApplication.tilesize);
+                b.setTranslateX(i * Window.tilesize);
+                b.setTranslateY(ii * Window.tilesize);
 
-                b.setMinWidth(HelloApplication.tilesize);
-                b.setMaxHeight(HelloApplication.tilesize);
-                b.setMinHeight(HelloApplication.tilesize);
-                b.setMaxWidth(HelloApplication.tilesize);
+                b.setMinWidth(Window.tilesize);
+                b.setMaxHeight(Window.tilesize);
+                b.setMinHeight(Window.tilesize);
+                b.setMaxWidth(Window.tilesize);
 
                 b.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
                     @Override
                     public void handle(MouseEvent event) {
 
-                        if (HelloApplication.gamer)
+                        if (Window.gamer)
                             return;
 
                         if (!firstClick)
@@ -227,8 +237,8 @@ public class HelloController implements Initializable {
 
                         MouseButton button = event.getButton();
 
-                        int iii = (int) (b.getTranslateX() / HelloApplication.tilesize);
-                        int iiii = (int) (b.getTranslateY() / HelloApplication.tilesize);
+                        int iii = (int) (b.getTranslateX() / Window.tilesize);
+                        int iiii = (int) (b.getTranslateY() / Window.tilesize);
 
                         if (button == MouseButton.PRIMARY) {
 
@@ -237,28 +247,29 @@ public class HelloController implements Initializable {
 
                                 // if (!firstClick) {
 
-                                //     // Change the bomb's place
-                                //     while(true){
+                                // // Change the bomb's place
+                                // while(true){
 
-                                //         int x = (int) (Math.random() * (HelloApplication.size / HelloApplication.tilesize));
-                                //         int y = (int) (Math.random() * (HelloApplication.size / HelloApplication.tilesize));
+                                // int x = (int) (Math.random() * (HelloApplication.size /
+                                // HelloApplication.tilesize));
+                                // int y = (int) (Math.random() * (HelloApplication.size /
+                                // HelloApplication.tilesize));
 
-                                //         if(bombas[x][y] == -69) continue;
+                                // if(bombas[x][y] == -69) continue;
 
-                                //         bombas[x][y] = -69;
-                                //         bombas[iii][iiii] = 0;
+                                // bombas[x][y] = -69;
+                                // bombas[iii][iiii] = 0;
 
-                                //         openEspaço(iii, iiii, bombas);
-                                //         break;
-                                //     }
-                                //     return;
+                                // openEspaço(iii, iiii, bombas);
+                                // break;
+                                // }
+                                // return;
                                 // }
 
                                 endPlay(false);
                             }
 
                             openEspaço(iii, iiii, bombas);
-
 
                         } else if (button == MouseButton.SECONDARY) {
 
@@ -304,10 +315,10 @@ public class HelloController implements Initializable {
 
                 Button b = (Button) button;
 
-                int value = bombas[(int) (b.getTranslateX() / HelloApplication.tilesize)][(int) (b.getTranslateY()
-                        / HelloApplication.tilesize)];
+                int value = bombas[(int) (b.getTranslateX() / Window.tilesize)][(int) (b.getTranslateY()
+                        / Window.tilesize)];
 
-                if ((value == -420 || value == -2 || value == -69) && HelloApplication.gamer) {
+                if ((value == -420 || value == -2 || value == -69) && Window.gamer) {
 
                     b.setText("");
                     ImageView view = new ImageView(flag);
@@ -331,7 +342,7 @@ public class HelloController implements Initializable {
                     b.setBackground(null);
 
                     DropShadow shadow = new DropShadow();
-                    shadow.setRadius(HelloApplication.tilesize / 2);
+                    shadow.setRadius(Window.tilesize / 2);
 
                     b.setEffect(shadow);
                     b.setStyle("-fx-font-weight: bold");
@@ -345,11 +356,11 @@ public class HelloController implements Initializable {
                     Button newButton = new Button();
                     newButton.setTranslateX(b.getTranslateX());
                     newButton.setTranslateY(b.getTranslateY());
-                    newButton.setMinWidth(HelloApplication.tilesize);
+                    newButton.setMinWidth(Window.tilesize);
 
-                    newButton.setMaxHeight(HelloApplication.tilesize);
-                    newButton.setMinHeight(HelloApplication.tilesize);
-                    newButton.setMaxWidth(HelloApplication.tilesize);
+                    newButton.setMaxHeight(Window.tilesize);
+                    newButton.setMinHeight(Window.tilesize);
+                    newButton.setMaxWidth(Window.tilesize);
                     newButton.setOnMouseClicked(b.getOnMouseClicked());
 
                     add.add(newButton);
@@ -361,16 +372,19 @@ public class HelloController implements Initializable {
         pain.getChildren().removeAll(remove);
         pain.getChildren().addAll(add);
 
-        if (verificarVictórya()) endPlay(true);
+        if (verificarVictórya())
+            endPlay(true);
 
     }
 
-    private String corAleatórya() { return String.valueOf((new Random().nextInt((255 - 1) + 1) + 1)); }
+    private String corAleatórya() {
+        return String.valueOf((new Random().nextInt((255 - 1) + 1) + 1));
+    }
 
     private boolean verificarVictórya() {
 
-        for (int i = 0; i < (int) (HelloApplication.size / HelloApplication.tilesize); i++) {
-            for (int ii = 0; ii < (int) (HelloApplication.size / HelloApplication.tilesize); ii++) {
+        for (int i = 0; i < (int) (Window.size / Window.tilesize); i++) {
+            for (int ii = 0; ii < (int) (Window.size / Window.tilesize); ii++) {
                 if (bombas[i][ii] == -2 || bombas[i][ii] == 0) {
                     return false;
                 }
@@ -380,13 +394,13 @@ public class HelloController implements Initializable {
         return true;
     }
 
-    private void endPlay(boolean win){
+    private void endPlay(boolean win) {
 
         butao.setVisible(true);
         timer.stop();
 
-        if(win){
-            
+        if (win) {
+
             hentai.setEffect(null);
 
             for (Node button : pain.getChildren()) {
@@ -399,9 +413,10 @@ public class HelloController implements Initializable {
                 }
             }
 
+            DatabaseConnection.addUserRecord(timeElapsed, (int) (Window.size / Window.tilesize), apiIMG);
             return;
         }
 
-        HelloApplication.gamer = true;
+        Window.gamer = true;
     }
 }

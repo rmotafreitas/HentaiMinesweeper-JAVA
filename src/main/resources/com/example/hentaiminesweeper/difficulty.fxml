@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<Pane fx:id="pain" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="368.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.hentaiminesweeper.menus.DifficultyMenuController">
+   <children>
+      <ImageView fx:id="hentai" layoutX="0.0" layoutY="-5.0" pickOnBounds="true" preserveRatio="true" />
+   </children>
+   <Button fx:id="butao" layoutX="15.0" layoutY="15.0" mnemonicParsing="false" onAction="#startGame" text="Manda vir hentai" />
+   <Accordion layoutX="20.0" layoutY="110.0">
+     <panes>
+       <TitledPane animated="false" text="Template dificulty">
+         <content>
+           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <children>
+                     <RadioButton fx:id="easy" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="Easy!" />
+                     <RadioButton fx:id="normal" layoutX="13.0" layoutY="55.0" mnemonicParsing="false" text="Normal..." />
+                     <RadioButton fx:id="hard" layoutX="14.0" layoutY="96.0" mnemonicParsing="false" text="Hard^^" />
+                     <RadioButton fx:id="lunatic" layoutX="14.0" layoutY="140.0" mnemonicParsing="false" text="Lunatic &gt;:3" />
+                     <Label layoutX="133.0" layoutY="14.0" text="For normal humans with normal lives" />
+                     <Label layoutX="133.0" layoutY="55.0" text="For the veterans in mine sweeping" />
+                     <Label layoutX="133.0" layoutY="96.0" text="For the adventurous mine sweepers" />
+                     <Label layoutX="133.0" layoutY="140.0" text="No longer human" />
+                  </children></AnchorPane>
+         </content>
+       </TitledPane>
+       <TitledPane animated="false" prefWidth="360.0" text="Custom dificulty">
+         <content>
+           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <children>
+                     <Label layoutX="14.0" layoutY="10.0" text="Number of tiles" />
+                     <Slider fx:id="tiles" blockIncrement="1" layoutX="14.0" layoutY="40.0" max="50.0" min="5.0" minorTickCount="1" prefHeight="14.0" prefWidth="326.0" showTickLabels="true" showTickMarks="true" />
+                     <Label layoutX="14.0" layoutY="69.0" text="Number of bombs" />
+                     <Slider fx:id="bombs" blockIncrement="1" layoutX="14.0" layoutY="95.0" max="25.0" min="2.0" minorTickCount="1" prefHeight="14.0" prefWidth="326.0" showTickLabels="true" showTickMarks="true" />
+                     <Label fx:id="config" layoutX="14.0" layoutY="144.0" text="Configuration:" />
+                  </children></AnchorPane>
+         </content>
+       </TitledPane>
+     </panes>
+   </Accordion>
+   <Label layoutX="20.0" layoutY="73.0" text="Dificulty selector">
+      <font>
+         <Font name="Comic Sans MS" size="21.0" />
+      </font>
+   </Label>
+   <Separator layoutX="20.0" layoutY="53.0" prefHeight="1.0" prefWidth="434.0" />
+   <CheckBox layoutX="137.0" layoutY="19.0" mnemonicParsing="false" text="NSFW" />
+   <ImageView fitHeight="259.0" fitWidth="214.0" layoutX="386.0" layoutY="148.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@dif.png" />
+      </image>
+   </ImageView>
+</Pane>
