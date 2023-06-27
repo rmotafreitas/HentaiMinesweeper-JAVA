@@ -11,6 +11,8 @@ public enum GameDifficulty {
     public int size = 5;
     public int mines = 2;
 
+    public static final float mercy = 1.2f;
+
     private GameDifficulty(int size, int mines){
 
         this.size = size;
@@ -26,5 +28,11 @@ public enum GameDifficulty {
             case "lunatic": return LUNATIC;
             default: return EASY;
         }
+    }
+
+    public int getReward(){
+
+        int baseReward = (int) Math.round(this.size * GameDifficulty.mercy * Math.log(mines));
+        return baseReward;
     }
 }

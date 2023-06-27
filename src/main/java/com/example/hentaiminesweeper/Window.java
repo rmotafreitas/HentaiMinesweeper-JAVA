@@ -2,37 +2,24 @@ package com.example.hentaiminesweeper;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 
 import java.net.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.example.hentaiminesweeper.structs.ApiImage;
 import com.example.hentaiminesweeper.structs.GameDifficulty;
-import com.example.hentaiminesweeper.structs.User;
 import com.example.hentaiminesweeper.structs.ApiImage.ApiImageCollection;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Random;
-import java.util.Timer;
 
 public class Window extends Application {
 
@@ -63,10 +50,7 @@ public class Window extends Application {
         Stage stage = (Stage) scene.getWindow();
         
         Scene s;
-        if(page.equals("game.fxml")){
-            
-            s = new Scene(loader.load(), Window.size, Window.size + 40);
-        }else s = new Scene(loader.load());
+        s = new Scene(loader.load());
 
         stage.setScene(s);
     }

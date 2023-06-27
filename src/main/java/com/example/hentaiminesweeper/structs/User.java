@@ -1,5 +1,6 @@
 package com.example.hentaiminesweeper.structs;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
@@ -23,6 +24,8 @@ public class User implements Serializable{
     public String joinedAt = null;
     public long globalRank = -1;
     public long localRank = -1;
+
+    public long coins = 0, gems = 0;
 
     public User(String username, String password){
 

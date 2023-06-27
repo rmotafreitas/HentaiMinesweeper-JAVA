@@ -1,0 +1,48 @@
+#field {
+
+    -fx-background-color: #BFA9A4;
+}
+
+#b {
+
+    -fx-background-color: #A68C86;
+}
+
+#reward {
+
+    -fx-background-color: #402F2E;
+}
+
+#inner_reward {
+
+    -fx-background-color: #D9C1C5;
+}
+
+#splay {
+    -fx-padding: 8 15 15 15;
+    -fx-background-insets: 0,0 0 5 0, 0 0 6 0, 0 0 7 0;
+    -fx-background-radius: 8;
+    -fx-background-color: 
+        linear-gradient(from 0% 93% to 0% 100%, #402F2E 0%, #736363 100%),
+        #BFA9A4,
+        #A68C86,
+        radial-gradient(center 50% 50%, radius 100%, #A68C86, #402F2E);
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.75) , 4,0,0,1 );
+    -fx-font-weight: bold;
+    -fx-font-size: 1.1em;
+}
+#splay:hover {
+    -fx-background-color: 
+        linear-gradient(from 0% 93% to 0% 100%, #402F2E 0%, #736363 100%),
+        #BFA9A4,
+        #A68C86,
+        radial-gradient(center 50% 50%, radius 100%, #D9C1C5, #402F2E);
+}
+#splay:pressed {
+    -fx-padding: 10 15 13 15;
+    -fx-background-insets: 2 0 0 0,2 0 3 0, 2 0 4 0, 2 0 5 0;
+}
+#splay Text {
+    -fx-fill: white;
+    -fx-effect: dropshadow( gaussian , #402F2E , 0,0,0,2 );
+}
