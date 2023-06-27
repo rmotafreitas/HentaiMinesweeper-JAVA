@@ -68,6 +68,12 @@ public class MainMenuController implements Initializable{
     @FXML
     protected void classicStart(){
 
+        if(Main.account == null)
+        {
+            Window.sendMessage("Please Login","Please create an account or login to your existing account before playing :) It will only take a few seconds", false);
+            return;
+        }
+
         try {
             Window.changeScene(profile.getScene(), "difficulty.fxml");
         } catch (IOException e) {
