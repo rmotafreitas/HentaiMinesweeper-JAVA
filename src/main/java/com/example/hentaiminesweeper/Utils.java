@@ -26,10 +26,19 @@ import org.jasypt.intf.cli.JasyptPBEStringEncryptionCLI;
 import org.jasypt.util.text.BasicTextEncryptor;
 
 import com.example.hentaiminesweeper.menus.MainMenuController;
+import com.example.hentaiminesweeper.structs.GameDifficulty;
 import com.example.hentaiminesweeper.structs.User;
 import com.google.gson.Gson;
 
 public class Utils {
+
+    /*
+    #D9C1C5
+    #A68C86
+    #BFA9A4
+    #402F2E
+    #736363
+   */
 
     protected static String encryptionKey = null;
 
@@ -61,6 +70,8 @@ public class Utils {
                 ObjectInputStream ois = new ObjectInputStream(fis);
 
                 User myAccount = (User) ois.readObject();
+
+                login(myAccount.username, decryptPasswordValue(myAccount.password), false);
                 
                 System.out.println("Logged in as " + myAccount.username);
                 Main.account = myAccount;
@@ -92,7 +103,7 @@ public class Utils {
         return decryptedText;
     }
 
-    public static void login(String username, String password){
+    public static void login(String username, String password, boolean show){
 
         DatabaseConnection.getUserAccountOfName(username, new DatabaseConnection.SynchronousQueryCompletionListener() {
             
@@ -114,12 +125,22 @@ public class Utils {
                     myAccount.writeMyData();
 
                     MainMenuController.reInitialize();
-                    Window.sendMessage("Login success", "You were logged in successfully", false);
+
+                    if(show) Window.sendMessage("Login success", "You were logged in successfully", false);
                 }else{
 
                     Window.sendMessage("Passwords do not match","The inputed password does not match the registered password for this account", false);
                 }
             }
         });
+    }
+
+    public static int calculateCurrentReward(){
+
+        GameDifficulty dif = GameDifficulty.CUSTOM;
+        dif.mines = Window.bombCount;
+        dif.size = Window.tiles;
+
+        return dif.getReward();
     }
 }

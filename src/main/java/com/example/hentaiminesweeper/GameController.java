@@ -18,14 +18,20 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.image.Image;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import com.example.hentaiminesweeper.DatabaseConnection.SynchronousQueryCompletionListener;
+import com.example.hentaiminesweeper.structs.Record;
+
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 
 public class GameController implements Initializable {
 
@@ -38,28 +44,24 @@ public class GameController implements Initializable {
     public int timeElapsed = 0;
 
     @FXML
-    private ImageView hentai;
+    private ImageView hentai, icon;
 
     @FXML
-    private Button butao;
+    private Pane pain, field, reward;
 
     @FXML
-    private Pane pain;
-
-    @FXML
-    private Label timerLabel;
+    private Label timerLabel, difficulty, newBack, newTime, rewardLabel;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        reward.setVisible(false);
+
         // butao.setLayoutX(10);
         timerLabel.setVisible(false);
-        timerLabel.setTranslateY(Window.size - timerLabel.getLayoutY() + 5);
-
         timerLabel.setFont(new Font("Comic Sans MS", 20));
 
         // Start timer
-
         timer = new Timeline(
                 new KeyFrame(Duration.seconds(1),
                         new EventHandler<ActionEvent>() {
@@ -78,7 +80,25 @@ public class GameController implements Initializable {
                         }));
 
         timer.setCycleCount(Timeline.INDEFINITE);
+
+        //Define tile size
+        int tilesize = 517 / Window.tiles;
+        Window.tilesize = tilesize;
+
+        Window.size = Window.tiles * Window.tilesize;
         onHelloButtonClick();
+    }
+
+    @FXML
+    protected void returnToTitle(){
+
+        try {
+            
+            Window.changeScene(timerLabel.getScene(), "main-menu.fxml");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -90,36 +110,33 @@ public class GameController implements Initializable {
         timerLabel.setText(String.valueOf(timeElapsed));
         Window.gamer = false;
 
+        difficulty.setText("Difficulty: " + Window.tiles + "x" + Window.tiles + ", " + Window.bombCount + " bombs");
+
         bombas = gerarBombas();
 
         flag = new Image(
                 "https://media.discordapp.net/attachments/1099068976216154182/1117217972558237786/Sprite-0003.png",
-                25,
-                25, false, false);
+                Window.tilesize,
+                Window.tilesize, false, false);
         bomb = new Image(
                 "https://media.discordapp.net/attachments/1099068976216154182/1117217972826669167/Sprite-0001.png",
-                25,
-                25, false, false);
+                Window.tilesize,
+                Window.tilesize, false, false);
 
         try {
 
             apiIMG = Window.getIMagemUwU();
-            while (apiIMG.equals(null))
-                apiIMG = Window.getIMagemUwU();
-            Image image = new Image(apiIMG, Window.size, Window.size,
+            while (apiIMG.equals(null)) {apiIMG = Window.getIMagemUwU();}
+            Image image = new Image(apiIMG, 517, 517,
                     false, false);
 
-            hentai.setFitHeight(Window.size);
-            hentai.setFitWidth(Window.size);
-
             GaussianBlur blurEffect = new GaussianBlur(20);
-            hentai.setEffect(blurEffect);
 
+            hentai.setEffect(blurEffect);
             hentai.setImage(image);
 
-            butao.setLayoutX(125);
-            butao.setVisible(false);
-            butao.setTranslateY(Window.size - butao.getLayoutY() + 5);
+            hentai.setFitWidth(515);
+            hentai.setFitHeight(515);
 
             desenharCoisaQuadradão();
 
@@ -191,13 +208,6 @@ public class GameController implements Initializable {
         } else {
             bombas[y][x] = bombs;
         }
-
-        for (int i = 0; i < bombas.length ; i++) {
-            for (int j = 0; j < bombas.length; j++) {
-                System.out.print(bombas[j][i] + " ");
-            }
-            System.out.println();
-        }
     }
 
     /*
@@ -215,6 +225,7 @@ public class GameController implements Initializable {
             for (int ii = 0; ii < (int) (Window.size / Window.tilesize); ii++) {
 
                 Button b = new Button();
+                b.setPadding(Insets.EMPTY);
 
                 b.setTranslateX(i * Window.tilesize);
                 b.setTranslateY(ii * Window.tilesize);
@@ -311,7 +322,7 @@ public class GameController implements Initializable {
 
         for (Node button : pain.getChildren()) {
 
-            if (button instanceof Button && !(button.getId() != null && button.getId().equals("butao"))) {
+            if (button instanceof Button && !(button.getId() != null && button.getId().equals("splay"))) {
 
                 Button b = (Button) button;
 
@@ -396,7 +407,6 @@ public class GameController implements Initializable {
 
     private void endPlay(boolean win) {
 
-        butao.setVisible(true);
         timer.stop();
 
         if (win) {
@@ -405,7 +415,7 @@ public class GameController implements Initializable {
 
             for (Node button : pain.getChildren()) {
 
-                if (button instanceof Button && !(button.getId() != null && button.getId().equals("butao"))) {
+                if (button instanceof Button && !(button.getId() != null && button.getId().equals("splay"))) {
                     Button b = (Button) button;
                     b.setBackground(null);
                     b.setText("");
@@ -414,9 +424,49 @@ public class GameController implements Initializable {
             }
 
             DatabaseConnection.addUserRecord(timeElapsed, (int) (Window.size / Window.tilesize), apiIMG);
+            
+            showRewardsPopUp();
             return;
         }
 
         Window.gamer = true;
+    }
+
+    private void showRewardsPopUp(){
+
+        newBack.setVisible(false);
+        newTime.setVisible(false);
+        reward.setVisible(true);
+
+        int reward = Utils.calculateCurrentReward();
+        rewardLabel.setText(reward + " coins!!");
+
+        Image image = new Image(getClass().getResource("/com/example/hentaiminesweeper/images/coin.png").toString(), icon.getFitWidth(), icon.getFitHeight(), true, true);
+        icon.setImage(image);
+
+        DatabaseConnection.getUserTimes(Main.account.id, new SynchronousQueryCompletionListener() {
+
+            @Override
+            public void queryFinished(Object[] returnValue) {
+                
+                boolean bestTime = ((com.example.hentaiminesweeper.structs.Record) returnValue[0]).getTime() <= timeElapsed;
+                boolean newImage = Stream.of(returnValue).map(r -> (Record) r).filter(r -> r.image.equals(apiIMG)).collect(Collectors.toList()).size() != 0;
+
+                Platform.runLater(() -> {
+
+                    newTime.setVisible(bestTime);
+                    newBack.setVisible(newImage);
+                });
+            }
+            
+        });
+    }
+
+    @FXML
+    protected void claimRewards()
+    {
+
+        reward.setVisible(false);
+        DatabaseConnection.giveCoinsToUser(Utils.calculateCurrentReward());
     }
 }

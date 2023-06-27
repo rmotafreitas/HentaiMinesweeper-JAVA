@@ -1,5 +1,6 @@
 package com.example.hentaiminesweeper.menus;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
@@ -10,6 +11,7 @@ import com.example.hentaiminesweeper.Main;
 import com.example.hentaiminesweeper.Utils;
 import com.example.hentaiminesweeper.Window;
 import com.example.hentaiminesweeper.DatabaseConnection.SynchronousQueryCompletionListener;
+import com.example.hentaiminesweeper.structs.Record;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -21,6 +23,8 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -33,7 +37,7 @@ public class MainMenuController implements Initializable{
     private Pane profile;
 
     @FXML
-    private Label profile_label, g_ranking, l_ranking, b_time, f_images, d_join;
+    private Label profile_label, g_ranking, l_ranking, b_time, f_images, d_join, coins, gems;
 
     @FXML
     private Button login;
@@ -46,17 +50,14 @@ public class MainMenuController implements Initializable{
         profile.setStyle("-fx-border-color: black");
         app = this;
 
-        // Define profile information
-        if(Main.account != null){
+        //coins.setGraphic(new ImageView(new Image(path)));
+        Image image = new Image(getClass().getResource("/com/example/hentaiminesweeper/images/coin.png").toString(), 16, 16, true, true);
+        Image image2 = new Image(getClass().getResource("/com/example/hentaiminesweeper/images/gem.png").toString(), 16, 16, true, true);
 
-            profile_label.setText("USER ACCOUNT OF: " + (Main.account == null ? "Guest" : Main.account.username));
-            
-            g_ranking.setText("Glabal ranking: " + (Main.account.globalRank == -1 ? "###" : Main.account.globalRank));
-            l_ranking.setText("Local ranking: " + (Main.account.localRank == -1 ? "###" : Main.account.localRank));
-            b_time.setText("Best time: " + (Main.account.bestTime == -1 ? "###" : (Main.account.bestTime + "s")));
-            f_images.setText("Images found: " + Main.account.imagesFound);
-            d_join.setText("Joined at: " + Main.account.joinedAt.split(",")[0]);
-        }
+        coins.setGraphic(new ImageView(image));
+        gems.setGraphic(new ImageView(image2));
+
+        reInitialize();
     }
 
     @FXML
@@ -101,7 +102,7 @@ public class MainMenuController implements Initializable{
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {
 
-            Utils.login(user, result.get());
+            Utils.login(user, result.get(), true);
         }
     }
 
@@ -189,6 +190,26 @@ public class MainMenuController implements Initializable{
                 app.b_time.setText("Best time: " + (Main.account.bestTime == -1 ? "###" : (Main.account.bestTime + "s")));
                 app.f_images.setText("Images found: " + Main.account.imagesFound);
                 app.d_join.setText("Joined at: " + Main.account.joinedAt.split(",")[0]);
+                
+                app.coins.setText(String.valueOf(Main.account.coins));
+                app.gems.setText(String.valueOf(Main.account.gems));
+
+                DatabaseConnection.getUserTimes(Main.account.id, new SynchronousQueryCompletionListener() {
+
+                    @Override
+                    public void queryFinished(Object[] returnValue) {
+                        
+                        if(returnValue.length == 0) return;
+                        com.example.hentaiminesweeper.structs.Record r = (Record) returnValue[0];
+                        Main.account.bestTime = r.time;
+                        
+                        Platform.runLater(()-> {
+
+                            app.b_time.setText("Best time: " + r.getTimeFormated());
+                        });
+                    }
+                    
+                });
             });
         }
     }
