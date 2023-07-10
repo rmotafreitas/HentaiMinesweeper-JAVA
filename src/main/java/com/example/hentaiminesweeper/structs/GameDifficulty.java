@@ -30,6 +30,21 @@ public enum GameDifficulty {
         }
     }
 
+    public int getSize(){
+
+        if(
+            !(mines==10 && size==8) &&
+            !(mines==40 && size==16) &&
+            !(mines==99 && size==30) &&
+            !(mines==1000 && size==50)
+        ){
+            return -1;
+        }else{
+
+            return size;
+        }
+    }
+
     public int getReward(){
 
         int baseReward = (int) Math.round(this.size * GameDifficulty.mercy * Math.log(mines));

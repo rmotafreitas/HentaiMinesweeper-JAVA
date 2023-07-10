@@ -3,8 +3,10 @@ package com.example.hentaiminesweeper.menus;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.StreamSupport;
 
 import com.example.hentaiminesweeper.DatabaseConnection;
 import com.example.hentaiminesweeper.Main;
@@ -200,18 +202,23 @@ public class MainMenuController implements Initializable{
                 app.coins.setText(String.valueOf(Main.account.coins));
                 app.gems.setText(String.valueOf(Main.account.gems));
 
-                DatabaseConnection.getUserTimes(Main.account.id, new SynchronousQueryCompletionListener() {
+                DatabaseConnection.getUserTimesRanked(Main.account.id, new SynchronousQueryCompletionListener() {
 
                     @Override
                     public void queryFinished(Object[] returnValue) {
                         
                         if(returnValue.length == 0) return;
+
                         com.example.hentaiminesweeper.structs.Record r = (Record) returnValue[0];
                         Main.account.bestTime = r.time;
+                        final long imagesFound = Arrays.asList(returnValue)
+                            .stream().map(rr -> ((Record) rr).image)
+                            .distinct().count();
                         
                         Platform.runLater(()-> {
 
                             app.b_time.setText("Best time: " + r.getTimeFormated());
+                            app.f_images.setText("Images found: " + imagesFound);
                         });
                     }
                     

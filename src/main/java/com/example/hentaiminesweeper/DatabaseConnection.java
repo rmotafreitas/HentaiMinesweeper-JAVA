@@ -17,6 +17,8 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import com.example.hentaiminesweeper.menus.DifficultyMenuController;
+import com.example.hentaiminesweeper.structs.GameDifficulty;
 import com.example.hentaiminesweeper.structs.Record;
 import com.example.hentaiminesweeper.structs.User;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -65,7 +67,7 @@ public class DatabaseConnection {
         return !(application == null || database == null);
     }
 
-    public static void addUserRecord(long time, int boardSize, String image) {
+    public static void addUserRecord(long time, GameDifficulty difficulty, String image) {
 
         if (!isInitialized()) return;
         if(Main.account == null) {
@@ -80,7 +82,7 @@ public class DatabaseConnection {
 
             DatabaseReference recordsRef = database.getReference("records").child(childID);
             recordsRef.setValue(
-                new Record(image, time, boardSize, Main.account), 
+                new Record(image, time, difficulty.getSize(), Main.account), 
                 null
             );
 
@@ -158,6 +160,58 @@ public class DatabaseConnection {
 
                 List<Record> l = StreamSupport.stream(snapshot.getChildren().spliterator(), false)
                     .map(i -> i.getValue(Record.class))
+                    .collect(Collectors.toList());
+
+                Collections.sort(l, Comparator.comparingLong(Record::getTime));
+                listener.queryFinished(l.toArray());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {}
+            
+        });
+    }
+
+    public static void getUserTimesRanked(String id, SynchronousQueryCompletionListener listener){
+
+        if (!isInitialized()) return;
+
+        DatabaseReference usersRef = database.getReference("records/");
+        Query query = usersRef.orderByChild("user").equalTo(id);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+
+                List<Record> l = StreamSupport.stream(snapshot.getChildren().spliterator(), false)
+                    .map(i -> i.getValue(Record.class))
+                    .filter(r -> r.boardSize != -1)
+                    .collect(Collectors.toList());
+
+                Collections.sort(l, Comparator.comparingLong(Record::getTime));
+                listener.queryFinished(l.toArray());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {}
+            
+        });
+    }
+
+    public static void getUserTimesOfSize(String id, int size, SynchronousQueryCompletionListener listener){
+
+        if (!isInitialized()) return;
+
+        DatabaseReference usersRef = database.getReference("records/");
+        Query query = usersRef.orderByChild("user").equalTo(id);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+
+                List<Record> l = StreamSupport.stream(snapshot.getChildren().spliterator(), false)
+                    .map(i -> i.getValue(Record.class))
+                    .filter(r -> r.boardSize == size)
                     .collect(Collectors.toList());
 
                 Collections.sort(l, Comparator.comparingLong(Record::getTime));

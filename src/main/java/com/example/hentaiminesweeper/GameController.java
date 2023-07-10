@@ -5,6 +5,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -358,9 +359,10 @@ public class GameController implements Initializable {
                     b.setEffect(shadow);
                     b.setStyle("-fx-font-weight: bold");
                     b.setStyle("-fx-font-size: 12px");
+                    b.setStyle("-fx-effect: dropshadow(one-pass-box, black, 8, 0.0, 2, 0)");
 
                     b.setStyle(
-                            "-fx-text-fill: rgb(" + corAleatórya() + "," + corAleatórya() + "," + corAleatórya() + ")");
+                            "-fx-text-fill: white");
 
                 } else if (value == 0 || value == -69) {
 
@@ -423,7 +425,7 @@ public class GameController implements Initializable {
                 }
             }
 
-            DatabaseConnection.addUserRecord(timeElapsed, (int) (Window.size / Window.tilesize), apiIMG);
+            DatabaseConnection.addUserRecord(timeElapsed, Window.difficulty, apiIMG);
             
             showRewardsPopUp();
             return;
@@ -433,6 +435,8 @@ public class GameController implements Initializable {
     }
 
     private void showRewardsPopUp(){
+
+        if(Window.difficulty.getSize() == -1) return;
 
         newBack.setVisible(false);
         newTime.setVisible(false);
@@ -449,14 +453,23 @@ public class GameController implements Initializable {
             @Override
             public void queryFinished(Object[] returnValue) {
                 
-                boolean bestTime = ((com.example.hentaiminesweeper.structs.Record) returnValue[0]).getTime() <= timeElapsed;
                 boolean newImage = Stream.of(returnValue).map(r -> (Record) r).filter(r -> r.image.equals(apiIMG)).collect(Collectors.toList()).size() != 0;
-
-                Platform.runLater(() -> {
-
-                    newTime.setVisible(bestTime);
-                    newBack.setVisible(newImage);
+                
+                DatabaseConnection.getUserTimesOfSize(Main.account.id, Window.difficulty.size, new SynchronousQueryCompletionListener() {
+                    
+                    @Override
+                    public void queryFinished(Object[] returnValue) {
+                        
+                        boolean bestTime = ((com.example.hentaiminesweeper.structs.Record) returnValue[0]).getTime() <= timeElapsed;
+                        Platform.runLater(() -> {
+        
+                            newTime.setVisible(bestTime);
+                            newBack.setVisible(newImage);
+                        });
+                    }
+                    
                 });
+
             }
             
         });

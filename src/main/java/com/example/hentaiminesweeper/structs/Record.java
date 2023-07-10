@@ -1,5 +1,6 @@
 package com.example.hentaiminesweeper.structs;
 
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
@@ -22,6 +23,8 @@ public class Record {
     }
 
     public long getTime() {return time;}
+
+    @Exclude
     public String getTimeFormated(){
 
         long SS = time;

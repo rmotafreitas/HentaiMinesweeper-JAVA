@@ -31,6 +31,8 @@ public class Window extends Application {
     public static boolean gamer = false;
     public static ApiImage image = null;
 
+    public static GameDifficulty difficulty;
+
     @Override
     public void start(Stage stage) throws IOException {
 
@@ -155,5 +157,6 @@ public class Window extends Application {
         Window.size = tiles * tilesize;
 
         Window.bombCount = dif.mines;
+        Window.difficulty = dif;
     }
 }
